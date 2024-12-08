@@ -51,9 +51,9 @@
    - Scaled user inputs and fed them into the model to predict wine quality (Good/Bad).
    - Displayed prediction results with a help table for parameter guidance and contact information.
 
-3. **Deployment on Heroku:**  
+3. **Deployment on Render:**  
    - Created `requirements.txt` and `Procfile` for dependency management and app configuration.
-   - Uploaded codebase to GitHub and deployed the app on Heroku, enabling public accessibility.
+   - Uploaded codebase to GitHub and deployed the app on Render, enabling public accessibility.
 
 #### **Impact**  
-This project automates wine quality prediction, providing accurate and efficient insights for quality assurance. It integrates advanced machine learning with a user-friendly interface, showcasing end-to-end machine learning project deployment.
+This project automates wine quality prediction, providing accurate and efficient insights for quality assurance. It integrates machine learning with a user-friendly interface, showcasing end-to-end machine learning project deployment.
