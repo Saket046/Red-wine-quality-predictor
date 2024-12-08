@@ -1,98 +1,59 @@
-# Data collection
+### Project Title: **Red Wine Quality Prediction and Deployment**  
 
-I collected this data set from Kaggle website. The datasets is related to red variants of the Portuguese "Vinho Verde" wine. The data set have input variables as :
+#### **Data Collection**  
+- Sourced dataset from Kaggle: [Red Wine Quality Dataset](https://www.kaggle.com/datasets/uciml/red-wine-quality-cortez-et-al-2009).  
+- Dataset contains 1,599 rows, 11 input features (e.g., fixed acidity, pH, alcohol) and 1 target variable (quality).  
 
-1 - fixed acidity
+#### **Exploratory Data Analysis (EDA) and Data Preparation**  
+1. **Data Formatting:** Verified column data types and statistical descriptions using `.describe()`.  
+2. **Missing Values:** Found no missing data, requiring no imputation or removal.  
+3. **Duplicates:** Identified and removed 240 duplicate rows, retaining only the first occurrence.  
+4. **Outlier Handling:** Used Interquartile Range (IQR) to detect and remove outliers with custom functions.
 
-2 - volatile acidity
+#### **Feature Engineering**  
+1. **Feature Selection:**  
+   - Created a correlation matrix and heatmap to analyze relationships between features.  
+   - Dropped low-impact features ('pH', 'fixed acidity', 'citric acid', 'free sulfur dioxide') based on their correlation with the target variable.  
+2. **Feature Scaling:** Applied MinMaxScaler to standardize data, enabling effective performance for Euclidean distance-based models.  
+3. **Target Encoding:** Binarized wine quality scores (Good: >7, Bad: ≤7).  
 
-3 - citric acid
+#### **Data Balancing**  
+- Addressed class imbalance (125 "Good" vs. 860 "Bad") using SMOTE (Synthetic Minority Oversampling Technique) to ensure balanced training data.  
 
-4 - residual sugar
+#### **Model Development and Evaluation**  
+1. **Train-Test Split:** Divided data into 80% training and 20% testing sets.  
+2. **Model Selection:** Compared five classifiers using accuracy scores:  
+   - Random Forest (93.8%)
+   - XGBoost (94.4%)
+   - K-Nearest Neighbors (94.7%)
+   - Decision Tree (90.1%)
+   - SGD Classifier (84.6%)
+   - Selected **XGBoost** as the best performer through 10-fold cross-validation with a mean accuracy of 92.8%.
+ 
+3. **Hyperparameter Tuning:** Optimized parameters (learning_rate, max_depth, min_child_weight, gamma) using RandomizedSearchCV and GridSearchCV for peak performance.  
 
-5 - chlorides
+4. **Performance Metrics:**
+   - Precision: 0.91
+   - Recall: 0.95
+   - F1 Score: 0.93
+   - Test Accuracy: 94.5%
+   - Confusion Matrix:
+     ```
+     [619  66]  
+     [ 32 659]
+     ```
 
-6 - free sulfur dioxide
+#### **Model Deployment**  
+1. **Model Pickling:** Saved the trained model as a pickle file and verified functionality with dummy scaled inputs.  
+2. **Flask Web Application:**  
+   - Developed a user-friendly webpage with a form for inputting wine parameters.
+   - Validated inputs using Python's `try` and `except` for error handling.
+   - Scaled user inputs and fed them into the model to predict wine quality (Good/Bad).
+   - Displayed prediction results with a help table for parameter guidance and contact information.
 
-7 - total sulfur dioxide
+3. **Deployment on Heroku:**  
+   - Created `requirements.txt` and `Procfile` for dependency management and app configuration.
+   - Uploaded codebase to GitHub and deployed the app on Heroku, enabling public accessibility.
 
-8 - density
-
-9 - pH
-
-10 - sulphates
-
-11 - alcohol
-
-and Output variable as :
-
-12 - quality
-
-The data set have 1599 rows, 11 Features and 1 Target column.
-
-link to the data base repository is https://www.kaggle.com/datasets/uciml/red-wine-quality-cortez-et-al-2009
-
-
-# Exploratory data analysis and Feature Engineering
-
-
-1) Data formatting : Firstly, I checked the data type of all columns to check that wheather data is in correct format or not. After finding that the data is in correct    format I take the basic mathematical description of the data using .describe() function.
-
-2) Handling Missing Values : next step was checking and handling missing values. I found no missing data in the entire data set so we dont have to either drop or          impute and values in nan.
-
-3) Handling Duplicates : then, I checked for presence of any duplicate data in the data set. I found 240 rows as duplicated data in the data set. I dropped the            duplicate data keeping only the first row of any duplicate data.
-
-4) Handling Outliers : I have treat outliers with Inter quartile range. for this I have created two functions ie. outlier_finder that detect and print the outliers        present in the column and then we make a function named outlier_remover that removes those outliers. then we find and remove outliers from every column.
-
-# Feature Selection
-
-Firstly, I print the correlation matrix for our data frame to see the pearson correlation between our features. After this I plotted the Heatmap and decided to choose the cutoff pearson correlation value to be 6 for selecting features. Every features that have correlation higher then 6 among themselves we choose one of them based on their correlation with target column and drop the other. We dropped four features named 'pH', 'fixed acidity', 'citric acid', 'free sulfur dioxide'.
-
-# Feature Scaling
-
-After seeing the distribution of data we can conclude that Euclidean distance based models can perform well in this dataset so I choose to scale the data. I used MinMax Scaler to scale the data.
-After scaling the data we make the target set into 0 and 1 that is good or bad wine by setting the rule that any quality score greater then 7 is considered as good wine else it will be a bad wine.
-
-# Balancing the Dataset
-
-I found that the dataset is imbalanced with bad wine count of 125 and good wine count of 860. So I use SMOTE technique to oversample the minority class and balance the dataset so that our model don't get biased.
-After balancing the data set we divide the dataset into features(X) and target(y).
-
-# Train Test Split
-
-After dividing the data set into features and target set we do train test split. I keep 20% data for testing and remaining 80% data for training the model.
-
-# Model Selection
-
-I consider 5 Classifiers for model selection. Those classifiers are Random forest, XGBoost, K nearest neighbors, decision tree, SGDClassifier. I test them taking accuracy as my performance parameter. I found their scores as :
-
-SGDClassifier()	                      0.845930
-DecisionTreeClassifier()	      0.872093
-XGBClassifier()	                      0.921512
-KNeighborsClassifier(n_neighbors=1)   0.933140
-RandomForestClassifier()	      0.944767
-
-After this we choose top three performing models and check their accuracy using Cross validation with number of cross validation = 10 and found that XGBoost Classifier is performing the best with mean score of 92.9. So we choose our model as XGBoost Classifier.
-
-# Hyperparameter Tuning
-
-I consider four parameters to do hyperparameter tuning those are learning_rate, max_depth, min_child_weight, gamma. Firstly, I used Randomized search CV to find the range of values of parameters that are good for my model, then used Grid search CV to find the best possible combination of hyperparameters for my model.
-
-# Checking Model Accuracy
-
-For Checking the model's performance I consider three scores that are precision, recall and F1 score. I get precision of 0.9, Recall of 0.96 and F1 score of 0.933. finally, I check models score on test set and got the accuracy of 91.86. lastly I printed the Confusion matrix of the model:
-
-[611  74]
-[ 22 669]
-
-# Pickling the model
-
-After testing the model I finally pickle it and test the pickle model by feeding it a dummy scaled input to check whether the pickle file is working or not.
-
-# Creating a Flask Framework
-
-I created Webpage first and created a form in it in order to get the input from the user using get and post methods for various parameters we selected before, these inputs will be feeded to our ML model. I also provided a help table in the webpage that shows the range of values that a good wine have for that parameter. Then using get and post method I read the values given by the user and stored it in some variables if the data given by user is in incorrect format then it will show user a error message that will ask user to fill the values correctly this function is acheived by python try and except error handling technique. Now, after getting those values we first convert them to float and make a list of those values next we scale those values using min max scaler formula for each feature and then finally we convert this scaled input data into a dataframe and feed it to our pickle file and store its output as 0 or 1. Then return a message based on this output as good(1) or bad(0) quality of red wine. This message will be our final output in our webpage after we click on predict button. At the bottom of the webpage I have given my contacts and description.
-
-# Model Deployment
-
-After creating my app and required files I choose Heroku platform to deploy my model. After creating requirements and Procfile that will tell heroku about needed libraries and point from where it have to start excecuting codes, I uploaded these files in Github and then link my repository to my app in Heroku and finally deployed my Model.
+#### **Impact**  
+This project automates wine quality prediction, providing accurate and efficient insights for quality assurance. It integrates advanced machine learning with a user-friendly interface, showcasing end-to-end machine learning project deployment.
